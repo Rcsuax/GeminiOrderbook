@@ -94,17 +94,9 @@ class OrderBook:
                 # delete order from price level
                 if order.side == "bid":
                     # list comprehesnsion removes the matched order from the list
-                    self.bids[order.price] = [
-                        o
-                        for o in self.bids[order.price]
-                        if o.remaining != order.remaining
-                    ]
+                    self.bids[order.price] = [o for o in self.bids[order.price] if o.remaining != order.remaining ]
                 else:
-                    self.asks[order.price] = [
-                        o
-                        for o in self.asks[order.price]
-                        if o.remaining != order.remaining
-                    ]
+                    self.asks[order.price] = [o for o in self.asks[order.price] if o.remaining != order.remaining ]
             elif order.reason == "place":
                 # if price level doesnt exist, defaultdict will create it for us
                 if order.side == "bid":
