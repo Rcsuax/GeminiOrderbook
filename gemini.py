@@ -137,7 +137,7 @@ def run(queue: Queue, book: OrderBook):
 
 
 if __name__ == "__main__":
-    order_pool = Queue(maxsize=0)
+    order_pool = Queue(maxsize=0) # FIFO Queue or PRIORITY Queue
     order_book = OrderBook()
     order_source = OrderSource(queue=order_pool)
 
