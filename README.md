@@ -1,14 +1,19 @@
 ### Gemini Orderbook
 
 #### Setup Install
-``` pip3 -m venv venv```
-``` source ./venv/bin/activate```
-``` pip3 install -r requirements.txt ```
-``` python3 gemini.py ```
+- ``` python3 -m venv venv ```
+
+- ``` source ./venv/bin/activate```
+
+- ``` pip3 install -r requirements.txt ```
+
+- ``` python3 gemini.py ```
 
 #### Task
 The objective of the programming assignment is to write a simple text-based terminal/command prompt application that connects to the WebSocket market data feed of Gemini, a digital asset exchange, and, until terminated, on each update prints out the best bid and ask price and quantity of the BTCUSD asset pair. For example:
-6748.70 0.03700000 - 6748.71 4.27506690 6739.70 0.20000000 - 6739.71 4.63391087
+**best bid - quantity            best ask   quantity**
+**6748.70 0.03700000 - 6748.71 4.27506690 6739.70 0.20000000 - 6739.71 4.63391087**
+
 Above, the first column contains the best bid price, the second column the total quantity available on the best bid price level, and the third and fourth columns the same for the ask side. Whenever any of these values changes, the application prints out a line with the latest values.
 The protocol specification for the WebSocket market data feed is available at:
 https://docs.gemini.com/websocket-api/#market-data
