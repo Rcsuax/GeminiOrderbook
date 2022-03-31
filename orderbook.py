@@ -52,6 +52,9 @@ class Side(enum.Enum):
     BUY = "bid"
     SELL = "ask"
 
+
+
+
 @dataclass
 class Order:
     price: float
@@ -128,22 +131,23 @@ class OrderBook:
                 else:
                     # add order to asks
                     self.asks[order.price].append(order)
+            else:
+                print(f"TRADE: {order}")
 
-
-
-def run(queue: Queue, book: OrderBook):
-    print(f"====== RUN =======")
-    while True:
-        order = queue.get()
-
-        if order:
-            book.process_order(order)
-
-        book.print()
-        queue.task_done()
 
 
 if __name__ == "__main__":
+    def run(queue: Queue, book: OrderBook):
+        print(f"====== RUN =======")
+        while True:
+            order = queue.get()
+
+            if order:
+                book.process_order(order)
+
+            book.print()
+            queue.task_done()
+
     order_pool = Queue(maxsize=0) # FIFO Queue
     order_book = OrderBook()
     data_source = DataSource(queue=order_pool)
