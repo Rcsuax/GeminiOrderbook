@@ -1,6 +1,8 @@
 .DS_STORE
-/js/
-/refs/
 /venv/
-test*
+/misc/
+/tests/
+
+run_tests.sh
+test_orderbook.py
 todo.md
