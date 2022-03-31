@@ -106,13 +106,12 @@ class OrderBook:
         if order.remaining == 0:
             # if remaining is 0, all orders at this price level have been filled or cancelled.
             # remove the price level from the order book
-            # and reset current_bid / current_ask
             if order.side == "bid":
                 if self.bids[order.price]:
-                    self.bids.pop(order.price)
+                    del self.bids[order.price]
             else:
                 if self.asks[order.price]:
-                    self.asks.pop(order.price)
+                    del self.asks[order.price]
         else:
             if order.reason == "cancel":
                 # delete the order from price level
