@@ -49,8 +49,8 @@ class DataSource:
 
 
 class Side(enum.Enum):
-    BUY = "buy"
-    SELL = "sell"
+    BUY = "bid"
+    SELL = "ask"
 
 @dataclass
 class Order:
@@ -60,7 +60,7 @@ class Order:
     reason: str
 
     def __repr__(self):
-        return f"{self.price} {self.remaining}"
+        return f"{self.price} x {self.remaining}"
 
 
 
@@ -83,12 +83,24 @@ class OrderBook:
     def __len__(self) -> int:
         return len(self.bids) + len(self.asks)
 
+    def get_max_bid(self):
+        if(self.bids):
+            return self.bids[max(self.bids)][0]
+        else:
+            return 0
+
+    def get_min_ask(self):
+        if(self.asks):
+            return self.asks[min(self.asks)][0]
+        else:
+            return 0
+
     def print_summary(self):
         print(self)
         self.print()
 
     def print(self):
-        print(f"{self.bid_head}\t{self.ask_head}")
+        print(f"{self.get_max_bid()}\t - \t{self.get_min_ask()}")
 
     def process_order(self, order: Order):
         if order.remaining == 0:
@@ -101,42 +113,20 @@ class OrderBook:
             else:
                 if self.asks[order.price]:
                     self.asks.pop(order.price)
-                    if self.ask_head == order.price:
-                        self.ask_head = None
-
         else:
             if order.reason == "cancel":
                 # delete the order from price level
                 if order.side == "bid":
                     # list comprehesnsion removes the matched order from the list
                     self.bids[order.price] = [o for o in self.bids[order.price] if o.remaining != order.remaining ]
-                    
-                    if len(self.bids[order.price]) == 0 and self.bid_head.price == order.price and self.bid_head.remaining == order.remaining:
-                        self.bid_head = None
                 else:
                     self.asks[order.price] = [o for o in self.asks[order.price] if o.remaining != order.remaining ]
-
-                    if len(self.asks[order.price]) == 0 and self.ask_head.price == order.price and self.ask_head.remaining == order.remaining:
-                        self.ask_head = None
             elif order.reason == "initial" or order.reason == "place":
                 # if price level doesnt exist, defaultdict will create it for us
                 if order.side == "bid":
-                    # set current bid
-                    if self.bid_head == None:
-                        self.bid_head = order
-                    else:
-                        # set the best bid (highest price)
-                        if order.price > self.bid_head.price:
-                            self.bid_head = order
                     # add order to bids
                     self.bids[order.price].append(order)
                 else:
-                    if self.ask_head == None:
-                        self.ask_head = order
-                    else:
-                        # set the best ask (lowest price offer)
-                        if order.price < self.ask_head.price:
-                            self.ask_head = order
                     # add order to asks
                     self.asks[order.price].append(order)
 
@@ -150,7 +140,7 @@ def run(queue: Queue, book: OrderBook):
         if order:
             book.process_order(order)
 
-        book.print_summary()
+        book.print()
         queue.task_done()
 
 
