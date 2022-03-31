@@ -1,5 +1,7 @@
 # Gemini Orderbook
 
+[Github Repository](https://github.com/Rcsuax/GeminiOrderbook)
+
 A simple text-based terminal/command prompt application that connects to the WebSocket market data feed of Gemini, a digital asset exchange.
 On each update it prints out the **best bid** and **ask price** and **quantity** of the BTCUSD asset pair. 
 
