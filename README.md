@@ -15,7 +15,7 @@ source ./venv/bin/activate
 # install dependencies 
 pip3 install -r requirements.txt
 # run program
-python3 gemini.py
+python3 orderbook.py
 ```
 
 additionally you can use the provided **Dockerfile** to build a runnable container image
