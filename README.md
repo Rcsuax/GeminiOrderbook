@@ -20,11 +20,11 @@ python3 orderbook.py
 
 additionally you can use the provided **Dockerfile** to build a runnable container image
 ```bash
-# build image
+# build image from Dockerfile and name it orderbook
 docker build -t orderbook .
-# run image
+# create and run a container named: orderbookcontainer using the image we created earlier
 docker run -d --name orderbookcontainer orderbook
-# see logs
+# get snapshot of stdout from running container
 docker logs orderbookcontainer
 ```
 
@@ -88,6 +88,15 @@ class PriceLevel:
 ```python
 class Orderbook:
     def __init__(self):
+        """
+        self.bids =>
+            { (price): PriceLevel(1, 1, Side.BUY) }
+            { (price): PriceLevel(2, 1, Side.BUY) }
+
+        self.asks =>
+            { (price): PriceLevel(2, 1, Side.SELL) }
+            { (price): PriceLevel(3, 1, Side.SELL) }            
+        """
         self.bids = sortedcontainers.SortedDict(PriceLevel)
         self.asks = sortedcontainers.SortedDict(PriceLevel)
 
@@ -100,7 +109,7 @@ class Orderbook:
     def add_level(self, price, qty):
         pass
 
-    def add_level(self, price, qty):
+    def remove_level(self, price, qty):
         pass
 
     def print_summary():
