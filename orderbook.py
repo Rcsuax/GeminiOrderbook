@@ -17,8 +17,8 @@ class DataSource:
         self.queue = queue
         self.ws = websocket.WebSocketApp(
             "wss://api.gemini.com/v1/marketdata/btcusd",
-            on_message=self.on_message,
             on_open=self.on_open,
+            on_message=self.on_message,
         )
 
     def start(self):
@@ -54,11 +54,10 @@ class Side(enum.Enum):
 
 
 
-
 @dataclass
 class Order:
-    price: float
-    remaining: float
+    price: Decimal
+    remaining: Decimal
     side: Side
     reason: str
 
@@ -97,12 +96,16 @@ class OrderBook:
             return self.asks[min(self.asks)][0]
         else:
             return 0
+    
+    def get_string(self):
+            return f"{self.get_max_bid()}\t - \t{self.get_min_ask()}"
 
     def print_summary(self):
         print(self)
         self.print()
 
     def print(self):
+        # should cache this then eval the heap at the end. average case should be O(1)
         print(f"{self.get_max_bid()}\t - \t{self.get_min_ask()}")
 
     def process_order(self, order: Order):
@@ -133,27 +136,27 @@ class OrderBook:
                     self.asks[order.price].append(order)
             else:
                 print(f"TRADE: {order}")
+    
+    def run(self, queue: Queue):
+        print(f"====== RUN =======")
+        
+        while True:
+            order = queue.get()
+            if order:
+                self.process_order(order)
+
+            self.print()
+            queue.task_done()
 
 
 
 if __name__ == "__main__":
-    def run(queue: Queue, book: OrderBook):
-        print(f"====== RUN =======")
-        while True:
-            order = queue.get()
-
-            if order:
-                book.process_order(order)
-
-            book.print()
-            queue.task_done()
-
     order_pool = Queue(maxsize=0) # FIFO Queue
     order_book = OrderBook()
     data_source = DataSource(queue=order_pool)
 
     thread_data_stream = threading.Thread(target=data_source.start, daemon=True)
-    thread_output = threading.Thread(target=run, args=(order_pool, order_book))
+    thread_output = threading.Thread(target=order_book.run, args=(order_pool,))
 
     thread_data_stream.start()
     thread_output.start()
